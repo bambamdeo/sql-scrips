@@ -25,8 +25,10 @@ exec sp_MSForEachTable 'exec sp_spaceused [?]'
 
 --***************************************************************************************************
 --find stored procedures containing word 'Foo'
-
-
+SELECT OBJECT_NAME(object_id), OBJECT_DEFINITION(object_id)
+FROM sys.procedures
+WHERE OBJECT_DEFINITION(object_id) LIKE '%SearchString%'
+---------------or-------------------------
 SELECT ROUTINE_NAME, ROUTINE_DEFINITION 
 FROM INFORMATION_SCHEMA.ROUTINES 
 WHERE ROUTINE_DEFINITION LIKE '%Foo%' AND ROUTINE_TYPE='PROCEDURE'
