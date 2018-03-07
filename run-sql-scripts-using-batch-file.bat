@@ -17,8 +17,8 @@ for %%f in (*.sql) do (
 )
 
 ::OR if your scripts can be combined into one sql file and then executed 
-Rem we can skip the FOR loop and do something like this.
-
+::we can skip the FOR loop and do something like this.
+Rem == ::
 
 @ECHO OFF
 
