@@ -1,0 +1,43 @@
+How to automatically execute SQL queries with a batch file
+
+
+OSQL UTILITY
+The osql utility allows you to enter Transact-SQL statements, system procedures, and script files.  This utility uses ODBC to communicate with the server.  Once you have the osql command written, save the entire line into a file with a .bat extension.
+
+Commonly Used Arguments:
+
+-S (SQL Server\Instance name) Ex. -S myserver\SQLEXPRESS
+
+-E (Uses a trusted connection instead of requesting a password)
+
+-U (Login ID)
+
+-P (Password)
+
+-i (Input file) Ex. -i "c:\My Folder\MyScript.sql"
+
+-o (Output file) Ex. -o "c:\My Folder\MyScriptLog.txt"
+
+Example Syntax Usage:
+
+osql -S .\sqlexpress -E  -i "c:\defragIndexes.sql" -o "c:\defragIndexesLog.txt"
+(This command would execute a SQL script on a local SQLExpress server using Windows Authentication)
+
+osql -S mysql -U sqluser -P sqlpassword  -i "c:\defragIndexes.sql" -o "c:\defragIndexesLog.txt"
+(This command would execute a SQL script on a SQL server using SQL authentication)
+
+For more information about the OSQL Utility, see the following Microsoft article: http://technet.microsoft.com/en-us/library/aa214012(SQL.80).aspx
+
+
+
+EXECUTING THE BATCH FILE
+Once you have your batch file created with the "osql" command, you can use Windows Scheduled Tasks to automatically run this script.
+
+Open Control Panel=>Scheduled Tasks=>Add a Scheduled Task
+Browse to the batch file (Ex. c:\MyScripts\myscript.sql)
+Choose how often to run the task
+Choose the time to run the task
+Enter the Windows User account credentials
+
+
+src- http://micc.mitel.com/kb/KnowledgebaseArticle51069.aspx
