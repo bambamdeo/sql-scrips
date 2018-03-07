@@ -16,7 +16,8 @@ for %%f in (*.sql) do (
 %SQLCMD% -S %SERVER% -d %DB% -U %LOGIN% -P %PASSWORD% -i %%~f >> %OUTPUT%
 )
 
-//OR if your scripts can be combined into one sql file and then executed we can skip the FOR loop and do something like this.
+::OR if your scripts can be combined into one sql file and then executed 
+Rem we can skip the FOR loop and do something like this.
 
 
 @ECHO OFF
