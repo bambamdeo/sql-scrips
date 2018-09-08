@@ -1,0 +1,74 @@
+--srx https://www.mssqltips.com/sqlservertip/2085/sql-server-ddl-triggers-to-track-all-database-changes/
+
+
+--1. Create Table to store Log
+
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+SET ANSI_PADDING ON
+GO
+
+CREATE TABLE [dbo].[ChangeLog](
+	[LogId] [int] IDENTITY(1,1) NOT NULL,
+	[DatabaseName] [varchar](256) NOT NULL,
+	[EventType] [varchar](50) NOT NULL,
+	[ObjectName] [varchar](256) NOT NULL,
+	[ObjectType] [varchar](25) NOT NULL,
+	[SqlCommand] [varchar](max) NOT NULL,
+	[EventDate] [datetime] NOT NULL CONSTRAINT [DF_EventsLog_EventDate]  DEFAULT (getdate()),
+	[LoginName] [varchar](256) NOT NULL
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+
+GO
+
+--2. Create trigger to log Procs changes
+
+CREATE TRIGGER [backup_objects]
+ON DATABASE
+FOR CREATE_PROCEDURE, 
+    ALTER_PROCEDURE, 
+    DROP_PROCEDURE,
+    CREATE_TABLE, 
+    ALTER_TABLE, 
+    DROP_TABLE,
+    CREATE_FUNCTION, 
+    ALTER_FUNCTION, 
+    DROP_FUNCTION,
+    CREATE_VIEW,
+    ALTER_VIEW,
+    DROP_VIEW
+AS
+ 
+SET NOCOUNT ON
+ 
+DECLARE @data XML
+SET @data = EVENTDATA()
+ 
+INSERT INTO changelog(databasename, eventtype, 
+    objectname, objecttype, sqlcommand, loginname)
+VALUES(
+@data.value('(/EVENT_INSTANCE/DatabaseName)[1]', 'varchar(256)'),
+@data.value('(/EVENT_INSTANCE/EventType)[1]', 'varchar(50)'), 
+@data.value('(/EVENT_INSTANCE/ObjectName)[1]', 'varchar(256)'), 
+@data.value('(/EVENT_INSTANCE/ObjectType)[1]', 'varchar(25)'), 
+@data.value('(/EVENT_INSTANCE/TSQLCommand)[1]', 'varchar(max)'), 
+@data.value('(/EVENT_INSTANCE/LoginName)[1]', 'varchar(256)')
+)
+
+GO
+
+-- 3. Get Log using Procedure
+SELECT  [LogId]
+      ,[DatabaseName]
+      ,[EventType]
+      ,[ObjectName]
+      ,[ObjectType]
+      ,[SqlCommand]
+      ,[EventDate]
+      ,[LoginName]
+  FROM [dbo].[ChangeLog]
+
